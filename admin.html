@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>অ্যাডমিন প্যানেল — আস-সিরাত্বল মোস্তাকিম</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700;900&family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #0d3d2a;
+    --green-main: #1a5c3a;
+    --green-mid:  #2e7d52;
+    --green-light:#4caf50;
+    --gold:       #c9a84c;
+    --gold-light: #e8c96a;
+    --cream:      #f5f0e8;
+    --white:      #ffffff;
+    --text-dark:  #1a2a1e;
+    --text-mid:   #3a5240;
+    --text-light: #6b8a73;
+    --red:        #c0392b;
+    --red-light:  #e74c3c;
+    --sidebar-w:  260px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans Bengali', sans-serif; background: #f0f4f1; color: var(--text-dark); min-height: 100vh; display: flex; }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--green-deep);
+    min-height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform 0.3s;
+  }
+  .sb-brand {
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .sb-brand h2 {
+    font-family: 'Noto Serif Bengali', serif;
+    color: var(--gold-light);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .sb-brand span {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.72rem;
+    display: block;
+    margin-top: 4px;
+  }
+  .sb-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+  .sb-label {
+    color: rgba(255,255,255,0.35);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 16px 20px 6px;
+  }
+  .sb-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 20px;
+    color: rgba(255,255,255,0.72);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+  .sb-link:hover { background: rgba(255,255,255,0.07); color: white; }
+  .sb-link.active { background: rgba(201,168,76,0.15); color: var(--gold-light); border-left-color: var(--gold); }
+  .sb-link .icon { font-size: 1rem; width: 20px; text-align: center; }
+  .sb-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+  }
+  .sb-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .sb-user {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .sb-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--green-deep);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem;
+  }
+  .sb-username { color: rgba(255,255,255,0.8); font-size: 0.82rem; font-weight: 600; }
+  .sb-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+  .btn-logout {
+    width: 100%;
+    padding: 8px;
+    background: rgba(192,57,43,0.2);
+    border: 1px solid rgba(192,57,43,0.4);
+    color: #e88; border-radius: 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.82rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-logout:hover { background: rgba(192,57,43,0.4); color: #fcc; }
+
+  /* ── MAIN ── */
+  #main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .topbar {
+    background: white;
+    border-bottom: 1px solid #e0e8e3;
+    padding: 0 28px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 2px 8px rgba(13,61,42,0.06);
+  }
+  .page-title {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green-deep);
+  }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .btn-refresh {
+    padding: 7px 16px;
+    background: var(--green-main);
+    color: white;
+    border: none; border-radius: 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.8rem; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-refresh:hover { background: var(--green-mid); }
+  .content { padding: 28px; flex: 1; }
+
+  /* ── STATS CARDS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 22px;
+    border-left: 4px solid var(--green-main);
+    box-shadow: 0 2px 12px rgba(13,61,42,0.07);
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card.gold { border-left-color: var(--gold); }
+  .stat-card.red  { border-left-color: var(--red); }
+  .stat-card.teal { border-left-color: #16a085; }
+  .stat-num {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 2rem; font-weight: 900;
+    color: var(--green-deep);
+  }
+  .stat-label { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+
+  /* ── TABLE / PANEL ── */
+  .panel {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(13,61,42,0.07);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .panel-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid #e8f0eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .panel-title {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1rem; font-weight: 700;
+    color: var(--green-deep);
+  }
+  .panel-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .search-input {
+    padding: 7px 14px;
+    border: 1.5px solid #d0e0d5;
+    border-radius: 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.82rem; outline: none;
+    width: 200px; transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--green-mid); }
+  .btn-primary {
+    padding: 8px 18px;
+    background: var(--green-main);
+    color: white; border: none;
+    border-radius: 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-primary:hover { background: var(--green-mid); }
+  .btn-gold {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--green-deep); border: none;
+    border-radius: 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-sm {
+    padding: 5px 12px;
+    border: none; border-radius: 5px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-edit { background: rgba(46,125,82,0.12); color: var(--green-main); }
+  .btn-edit:hover { background: rgba(46,125,82,0.25); }
+  .btn-delete { background: rgba(192,57,43,0.1); color: var(--red); }
+  .btn-delete:hover { background: rgba(192,57,43,0.2); }
+  .btn-read { background: rgba(22,160,133,0.1); color: #16a085; }
+  .btn-read:hover { background: rgba(22,160,133,0.2); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #f5f9f6;
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e0e8e3;
+  }
+  tbody td {
+    padding: 12px 16px;
+    font-size: 0.84rem;
+    border-bottom: 1px solid #f0f5f2;
+    vertical-align: middle;
+  }
+  tbody tr:hover { background: #f8fbf9; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .badge-general { background: rgba(26,92,58,0.1); color: var(--green-main); }
+  .badge-new     { background: rgba(201,168,76,0.15); color: #8b6914; }
+  .badge-active  { background: rgba(76,175,80,0.1); color: #388e3c; }
+  .badge-inactive{ background: rgba(192,57,43,0.1); color: var(--red); }
+  .badge-news    { background: rgba(21,101,192,0.1); color: #1565c0; }
+  .badge-notice  { background: rgba(230,81,0,0.1); color: #e65100; }
+  .badge-unread  { background: rgba(192,57,43,0.1); color: var(--red); }
+  .badge-read    { background: rgba(76,175,80,0.1); color: #388e3c; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  .loading-row td { text-align: center; padding: 32px; color: var(--text-light); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e8f0eb;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-title {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1rem; font-weight: 700;
+    color: var(--green-deep);
+  }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: none; background: #f0f4f1;
+    color: var(--text-mid);
+    font-size: 1.1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: #e0e8e3; }
+  .modal-body { padding: 24px; }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #e8f0eb;
+    display: flex; justify-content: flex-end; gap: 10px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 0.8rem; font-weight: 600;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1.5px solid #d0e0d5;
+    border-radius: 7px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.87rem; outline: none;
+    color: var(--text-dark);
+    transition: border-color 0.2s;
+  }
+  .form-control:focus { border-color: var(--green-mid); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  select.form-control { cursor: pointer; }
+  textarea.form-control { resize: vertical; min-height: 90px; }
+  .btn-cancel {
+    padding: 9px 20px;
+    background: #f0f4f1;
+    color: var(--text-mid);
+    border: none; border-radius: 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.84rem; cursor: pointer;
+  }
+  .btn-cancel:hover { background: #e0e8e3; }
+  .btn-save {
+    padding: 9px 24px;
+    background: var(--green-main);
+    color: white; border: none;
+    border-radius: 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 0.84rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .btn-save:hover { background: var(--green-mid); }
+  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ── LOGIN SCREEN ── */
+  #loginScreen {
+    position: fixed; inset: 0;
+    background: var(--green-deep);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-box {
+    background: white;
+    border-radius: 16px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .login-logo {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-main), var(--green-mid));
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .login-title {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--green-deep);
+    margin-bottom: 6px;
+  }
+  .login-sub { color: var(--text-light); font-size: 0.82rem; margin-bottom: 28px; }
+  .login-error {
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.3);
+    color: var(--red);
+    padding: 10px 14px;
+    border-radius: 7px;
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .btn-login-submit {
+    width: 100%;
+    padding: 12px;
+    background: var(--green-main);
+    color: white; border: none;
+    border-radius: 8px;
+    font-family: 'Noto Serif Bengali', sans-serif;
+    font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; margin-top: 4px;
+    transition: background 0.2s;
+  }
+  .btn-login-submit:hover { background: var(--green-mid); }
+  .btn-login-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600;
+    color: white;
+    z-index: 9000;
+    display: none;
+    animation: fadeIn 0.3s;
+    max-width: 320px;
+  }
+  #toast.success { background: var(--green-main); }
+  #toast.error   { background: var(--red); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── PAGE SECTIONS ── */
+  .page-section { display: none; }
+  .page-section.active { display: block; }
+
+  /* ── MSG DETAIL ── */
+  .msg-detail {
+    background: #f8fbf9;
+    border: 1px solid #e0e8e3;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text-dark);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* ── RESPONSIVE ── */
+  #menuToggle {
+    display: none;
+    background: none; border: none;
+    font-size: 1.4rem; cursor: pointer;
+    color: var(--green-deep);
+  }
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    #menuToggle { display: block; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+    .overlay-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; }
+    .overlay-bg.show { display: block; }
+  }
+  @media (max-width: 500px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .content { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🕌</div>
+    <div class="login-title">অ্যাডমিন প্যানেল</div>
+    <div class="login-sub">আস-সিরাত্বল মোস্তাকিম সংগঠন</div>
+    <div class="login-error" id="loginError"></div>
+    <div class="form-group" style="text-align:left;">
+      <label class="form-label">ব্যবহারকারীর নাম</label>
+      <input type="text" id="loginUser" class="form-control" placeholder="username" autocomplete="username">
+    </div>
+    <div class="form-group" style="text-align:left;">
+      <label class="form-label">পাসওয়ার্ড</label>
+      <input type="password" id="loginPass" class="form-control" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-login-submit" id="loginBtn" onclick="doLogin()">লগইন করুন</button>
+  </div>
+</div>
+
+<div class="overlay-bg" id="overlayBg" onclick="closeSidebar()"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="sidebar">
+  <div class="sb-brand">
+    <h2>আস-সিরাত্বল মোস্তাকিম</h2>
+    <span>Admin Panel</span>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-label">প্রধান</div>
+    <button class="sb-link active" onclick="showPage('dashboard')">
+      <span class="icon">📊</span> ড্যাশবোর্ড
+    </button>
+    <div class="sb-label">সদস্য</div>
+    <button class="sb-link" onclick="showPage('members')">
+      <span class="icon">👥</span> সদস্য তালিকা
+    </button>
+    <div class="sb-label">কন্টেন্ট</div>
+    <button class="sb-link" onclick="showPage('news')">
+      <span class="icon">📰</span> সংবাদ ও নোটিশ
+    </button>
+    <div class="sb-label">যোগাযোগ</div>
+    <button class="sb-link" onclick="showPage('messages')">
+      <span class="icon">✉️</span> বার্তাসমূহ
+      <span class="sb-badge" id="unreadBadge" style="display:none;">0</span>
+    </button>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">A</div>
+      <div>
+        <div class="sb-username" id="sbUsername">Admin</div>
+        <div class="sb-role">অ্যাডমিনিস্ট্রেটর</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">🚪 লগআউট</button>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button id="menuToggle" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">ড্যাশবোর্ড</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-refresh" onclick="refreshCurrent()">🔄 রিফ্রেশ</button>
+      <a href="member.html" target="_blank" style="color:var(--green-main);text-decoration:none;font-size:0.82rem;">🌐 ওয়েবসাইট</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page-section active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="ds-total">—</div>
+          <div class="stat-label">মোট সদস্য</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-num" id="ds-general">—</div>
+          <div class="stat-label">সাধারণ সদস্য</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-num" id="ds-new">—</div>
+          <div class="stat-label">নতুন সদস্য</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-num" id="ds-unread">—</div>
+          <div class="stat-label">অপঠিত বার্তা</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="ds-news">—</div>
+          <div class="stat-label">মোট সংবাদ</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-num" id="ds-notices">—</div>
+          <div class="stat-label">মোট নোটিশ</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-num" id="ds-active">—</div>
+          <div class="stat-label">সক্রিয় সদস্য</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">⚡ দ্রুত কার্যক্রম</div>
+        </div>
+        <div style="padding:20px;display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn-primary" onclick="showPage('members');openMemberModal()">
+            ➕ নতুন সদস্য যোগ করুন
+          </button>
+          <button class="btn-gold" onclick="showPage('news');openNewsModal()">
+            📝 সংবাদ/নোটিশ লিখুন
+          </button>
+          <button class="btn-primary" onclick="showPage('messages')">
+            ✉️ বার্তা দেখুন
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MEMBERS ═══ -->
+    <div class="page-section" id="page-members">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">👥 সদস্য তালিকা</div>
+          <div class="panel-actions">
+            <input type="text" class="search-input" id="memberSearchInput" placeholder="🔍 নাম খুঁজুন..." oninput="filterMemberTable()">
+            <select class="search-input" id="memberTypeFilter" onchange="filterMemberTable()" style="width:140px;">
+              <option value="">সব ধরণ</option>
+              <option value="General">সাধারণ</option>
+              <option value="New">নতুন</option>
+            </select>
+            <button class="btn-primary" onclick="openMemberModal()">➕ নতুন সদস্য</button>
+          </div>
+        </div>
+        <table id="memberTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>নাম</th>
+              <th>ফোন</th>
+              <th>পদবি</th>
+              <th>ধরণ</th>
+              <th>অবস্থা</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="memberTableBody">
+            <tr class="loading-row"><td colspan="7">⏳ লোড হচ্ছে...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ NEWS/NOTICES ═══ -->
+    <div class="page-section" id="page-news">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">📰 সংবাদ ও নোটিশ</div>
+          <div class="panel-actions">
+            <select class="search-input" id="newsTypeFilter" onchange="loadNews()" style="width:140px;">
+              <option value="">সব</option>
+              <option value="news">সংবাদ</option>
+              <option value="notice">নোটিশ</option>
+            </select>
+            <button class="btn-primary" onclick="openNewsModal()">➕ নতুন লিখুন</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>শিরোনাম</th>
+              <th>ধরণ</th>
+              <th>ব্যাজ</th>
+              <th>তারিখ</th>
+              <th>প্রকাশিত</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="newsTableBody">
+            <tr class="loading-row"><td colspan="7">⏳ লোড হচ্ছে...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ MESSAGES ═══ -->
+    <div class="page-section" id="page-messages">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">✉️ যোগাযোগ বার্তা</div>
+          <div class="panel-actions">
+            <select class="search-input" id="msgFilter" onchange="loadMessages()" style="width:160px;">
+              <option value="">সব বার্তা</option>
+              <option value="unread">অপঠিত</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>নাম</th>
+              <th>বিষয়</th>
+              <th>ফোন / ইমেইল</th>
+              <th>তারিখ</th>
+              <th>অবস্থা</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="msgTableBody">
+            <tr class="loading-row"><td colspan="7">⏳ লোড হচ্ছে...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ══ MEMBER MODAL ══ -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="memberModalTitle">নতুন সদস্য যোগ করুন</div>
+      <button class="modal-close" onclick="closeModal('memberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="memberId">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">নাম (বাংলা) *</label>
+          <input type="text" id="m_name" class="form-control" placeholder="যেমন: মোঃ করিম">
+        </div>
+        <div class="form-group">
+          <label class="form-label">নাম (ইংরেজি)</label>
+          <input type="text" id="m_nameEn" class="form-control" placeholder="Md. Karim">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ফোন নম্বর</label>
+          <input type="text" id="m_phone" class="form-control" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ইমেইল</label>
+          <input type="email" id="m_email" class="form-control" placeholder="example@email.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ঠিকানা</label>
+        <input type="text" id="m_address" class="form-control" placeholder="গ্রাম/শহর, জেলা">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">সদস্যের ধরণ *</label>
+          <select id="m_type" class="form-control">
+            <option value="General">সাধারণ সদস্য</option>
+            <option value="New">নতুন সদস্য</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">পদবি</label>
+          <input type="text" id="m_role" class="form-control" placeholder="যেমন: সভাপতি">
+        </div>
+      </div>
+      <div class="form-group" id="m_activeGroup" style="display:none;">
+        <label class="form-label">অবস্থা</label>
+        <select id="m_active" class="form-control">
+          <option value="true">সক্রিয়</option>
+          <option value="false">নিষ্ক্রিয়</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('memberModal')">বাতিল</button>
+      <button class="btn-save" id="memberSaveBtn" onclick="saveMember()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NEWS MODAL ══ -->
+<div class="modal-overlay" id="newsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="newsModalTitle">নতুন সংবাদ/নোটিশ লিখুন</div>
+      <button class="modal-close" onclick="closeModal('newsModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="newsId">
+      <div class="form-group">
+        <label class="form-label">শিরোনাম *</label>
+        <input type="text" id="n_title" class="form-control" placeholder="শিরোনাম লিখুন">
+      </div>
+      <div class="form-group">
+        <label class="form-label">বিস্তারিত</label>
+        <textarea id="n_content" class="form-control" placeholder="বিস্তারিত লিখুন..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ধরণ *</label>
+          <select id="n_type" class="form-control">
+            <option value="News">সংবাদ</option>
+            <option value="Notice">নোটিশ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ব্যাজ *</label>
+          <select id="n_badge" class="form-control">
+            <option value="New">নতুন</option>
+            <option value="Hot">হট</option>
+            <option value="Important">গুরুত্বপূর্ণ</option>
+            <option value="Normal">সাধারণ</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">প্রকাশের তারিখ *</label>
+          <input type="date" id="n_date" class="form-control">
+        </div>
+        <div class="form-group" id="n_publishedGroup" style="display:none;">
+          <label class="form-label">প্রকাশ অবস্থা</label>
+          <select id="n_published" class="form-control">
+            <option value="true">প্রকাশিত</option>
+            <option value="false">অপ্রকাশিত</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('newsModal')">বাতিল</button>
+      <button class="btn-save" id="newsSaveBtn" onclick="saveNews()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MESSAGE DETAIL MODAL ══ -->
+<div class="modal-overlay" id="msgModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">বার্তার বিস্তারিত</div>
+      <button class="modal-close" onclick="closeModal('msgModal')">✕</button>
+    </div>
+    <div class="modal-body" id="msgDetailContent"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('msgModal')">বন্ধ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast"></div>
+
+<script>
+const API = "https://localhost:64566/api";
+let currentPage = 'dashboard';
+let allMembers = [];
+
+// ════════════════════════════════
+// AUTH
+// ════════════════════════════════
+function getToken() { return localStorage.getItem('songton_token'); }
+function getUsername() { return localStorage.getItem('songton_user'); }
+
+function authHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getToken()}`
+  };
+}
+
+async function doLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+
+  if (!user || !pass) {
+    errEl.textContent = "ব্যবহারকারীর নাম ও পাসওয়ার্ড দিন।";
+    errEl.style.display = 'block'; return;
+  }
+  btn.disabled = true; btn.textContent = "লোড হচ্ছে...";
+  errEl.style.display = 'none';
+
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({username: user, password: pass})
+    });
+    if (!res.ok) {
+      const d = await res.json();
+      errEl.textContent = d.message || "ভুল তথ্য দেওয়া হয়েছে।";
+      errEl.style.display = 'block';
+      return;
+    }
+    const data = await res.json();
+    localStorage.setItem('songton_token', data.token);
+    localStorage.setItem('songton_user', data.username);
+    document.getElementById('loginScreen').style.display = 'none';
+    initAdmin();
+  } catch(e) {
+    errEl.textContent = "সার্ভারের সাথে সংযোগ করা যাচ্ছে না।";
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = "লগইন করুন";
+  }
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogout() {
+  if (!confirm("লগআউট করবেন?")) return;
+  localStorage.removeItem('songton_token');
+  localStorage.removeItem('songton_user');
+  location.reload();
+}
+
+function initAdmin() {
+  const u = getUsername() || 'Admin';
+  document.getElementById('sbUsername').textContent = u;
+  document.getElementById('sbAvatar').textContent = u.charAt(0).toUpperCase();
+  loadDashboard();
+}
+
+// ════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════
+const pageTitles = {
+  dashboard: 'ড্যাশবোর্ড',
+  members:   'সদস্য তালিকা',
+  news:      'সংবাদ ও নোটিশ',
+  messages:  'বার্তাসমূহ'
+};
+
+function showPage(page) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(b => b.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  document.querySelectorAll('.sb-link').forEach(b => {
+    if (b.textContent.trim().includes(pageTitles[page])) b.classList.add('active');
+  });
+  document.getElementById('pageTitle').textContent = pageTitles[page];
+  currentPage = page;
+  closeSidebar();
+
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'members') loadMembers();
+  else if (page === 'news') loadNews();
+  else if (page === 'messages') loadMessages();
+}
+
+function refreshCurrent() { showPage(currentPage); }
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlayBg').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlayBg').classList.remove('show');
+}
+
+// ════════════════════════════════
+// TOAST
+// ════════════════════════════════
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = type;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════
+async function loadDashboard() {
+  try {
+    const res = await fetch(`${API}/dashboard/stats`, { headers: authHeaders() });
+    if (!res.ok) throw new Error();
+    const d = await res.json();
+    document.getElementById('ds-total').textContent   = d.totalMembers;
+    document.getElementById('ds-general').textContent = d.generalMembers;
+    document.getElementById('ds-new').textContent     = d.newMembers;
+    document.getElementById('ds-active').textContent  = d.activeMembers;
+    document.getElementById('ds-news').textContent    = d.totalNews;
+    document.getElementById('ds-notices').textContent = d.totalNotices;
+    document.getElementById('ds-unread').textContent  = d.unreadMessages;
+    // Sidebar badge
+    if (d.unreadMessages > 0) {
+      const badge = document.getElementById('unreadBadge');
+      badge.textContent = d.unreadMessages;
+      badge.style.display = 'inline-block';
+    }
+  } catch {
+    showToast('ড্যাশবোর্ড লোড ব্যর্থ হয়েছে।', 'error');
+  }
+}
+
+// ════════════════════════════════
+// MEMBERS
+// ════════════════════════════════
+async function loadMembers() {
+  document.getElementById('memberTableBody').innerHTML =
+    '<tr class="loading-row"><td colspan="7">⏳ লোড হচ্ছে...</td></tr>';
+  try {
+    const res = await fetch(`${API}/members`, { headers: authHeaders() });
+    allMembers = await res.json();
+    renderMemberTable(allMembers);
+  } catch {
+    document.getElementById('memberTableBody').innerHTML =
+      '<tr class="loading-row"><td colspan="7">❌ লোড করা যায়নি।</td></tr>';
+  }
+}
+
+function renderMemberTable(list) {
+  const tbody = document.getElementById('memberTableBody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">কোনো সদস্য নেই।</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map((m, i) => `
+    <tr>
+      <td style="color:var(--text-light);font-size:0.75rem;">${i+1}</td>
+      <td>
+        <strong style="color:var(--green-deep);">${m.name}</strong>
+        ${m.nameEn ? `<br><span style="font-size:0.72rem;color:var(--text-light);">${m.nameEn}</span>` : ''}
+      </td>
+      <td style="font-size:0.82rem;">${m.phone || '—'}</td>
+      <td style="font-size:0.82rem;">${m.role || '—'}</td>
+      <td><span class="badge ${m.memberType==='New'?'badge-new':'badge-general'}">${m.memberType==='New'?'নতুন':'সাধারণ'}</span></td>
+      <td><span class="badge ${m.isActive?'badge-active':'badge-inactive'}">${m.isActive?'সক্রিয়':'নিষ্ক্রিয়'}</span></td>
+      <td>
+        <button class="btn-sm btn-edit" onclick="editMember(${m.id})">✏️ সম্পাদন</button>
+        <button class="btn-sm btn-delete" onclick="deleteMember(${m.id}, '${m.name.replace(/'/g,"\\'")}')">🗑️ মুছুন</button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterMemberTable() {
+  const q    = document.getElementById('memberSearchInput').value.toLowerCase();
+  const type = document.getElementById('memberTypeFilter').value;
+  const filtered = allMembers.filter(m => {
+    const nameMatch = m.name.toLowerCase().includes(q) || (m.nameEn||'').toLowerCase().includes(q);
+    const typeMatch = !type || m.memberType === type;
+    return nameMatch && typeMatch;
+  });
+  renderMemberTable(filtered);
+}
+
+function openMemberModal(member = null) {
+  const isEdit = !!member;
+  document.getElementById('memberModalTitle').textContent = isEdit ? 'সদস্য সম্পাদনা' : 'নতুন সদস্য যোগ করুন';
+  document.getElementById('memberId').value    = isEdit ? member.id : '';
+  document.getElementById('m_name').value      = isEdit ? member.name : '';
+  document.getElementById('m_nameEn').value    = isEdit ? (member.nameEn||'') : '';
+  document.getElementById('m_phone').value     = isEdit ? (member.phone||'') : '';
+  document.getElementById('m_email').value     = isEdit ? (member.email||'') : '';
+  document.getElementById('m_address').value   = isEdit ? (member.address||'') : '';
+  document.getElementById('m_type').value      = isEdit ? member.memberType : 'General';
+  document.getElementById('m_role').value      = isEdit ? (member.role||'') : '';
+  document.getElementById('m_active').value    = isEdit ? String(member.isActive) : 'true';
+  document.getElementById('m_activeGroup').style.display = isEdit ? 'block' : 'none';
+  document.getElementById('memberModal').classList.add('open');
+}
+
+function editMember(id) {
+  const m = allMembers.find(x => x.id === id);
+  if (m) openMemberModal(m);
+}
+
+async function saveMember() {
+  const id   = document.getElementById('memberId').value;
+  const name = document.getElementById('m_name').value.trim();
+  if (!name) { showToast('নাম আবশ্যক।', 'error'); return; }
+
+  const body = {
+    name,
+    nameEn:     document.getElementById('m_nameEn').value || null,
+    phone:      document.getElementById('m_phone').value || null,
+    email:      document.getElementById('m_email').value || null,
+    address:    document.getElementById('m_address').value || null,
+    memberType: document.getElementById('m_type').value,
+    role:       document.getElementById('m_role').value || null,
+  };
+  if (id) body.isActive = document.getElementById('m_active').value === 'true';
+
+  const btn = document.getElementById('memberSaveBtn');
+  btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে...';
+
+  try {
+    const res = await fetch(`${API}/members${id ? '/'+id : ''}`, {
+      method:  id ? 'PUT' : 'POST',
+      headers: authHeaders(),
+      body:    JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error();
+    closeModal('memberModal');
+    showToast(id ? 'সদস্য আপডেট হয়েছে।' : 'নতুন সদস্য যোগ হয়েছে।');
+    loadMembers();
+  } catch {
+    showToast('সংরক্ষণ ব্যর্থ হয়েছে।', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'সংরক্ষণ করুন';
+  }
+}
+
+async function deleteMember(id, name) {
+  if (!confirm(`"${name}" কে মুছে দেবেন?`)) return;
+  try {
+    const res = await fetch(`${API}/members/${id}`, { method: 'DELETE', headers: authHeaders() });
+    if (!res.ok) throw new Error();
+    showToast('সদস্য মুছে দেওয়া হয়েছে।');
+    loadMembers();
+  } catch {
+    showToast('মুছতে ব্যর্থ হয়েছে।', 'error');
+  }
+}
+
+// ════════════════════════════════
+// NEWS / NOTICES
+// ════════════════════════════════
+let allNews = [];
+
+async function loadNews() {
+  document.getElementById('newsTableBody').innerHTML =
+    '<tr class="loading-row"><td colspan="7">⏳ লোড হচ্ছে...</td></tr>';
+  const type = document.getElementById('newsTypeFilter').value;
+  const url  = `${API}/news?published=false${type ? '&type='+type : ''}`;
+  try {
+    const res = await fetch(url, { headers: authHeaders() });
+    allNews = await res.json();
+    const tbody = document.getElementById('newsTableBody');
+    if (!allNews.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-state">কোনো সংবাদ নেই।</td></tr>';
+      return;
+    }
+    tbody.innerHTML = allNews.map((n, i) => `
+      <tr>
+        <td style="color:var(--text-light);font-size:0.75rem;">${i+1}</td>
+        <td style="max-width:240px;">
+          <span style="font-weight:600;color:var(--green-deep);">${n.title}</span>
+        </td>
+        <td><span class="badge ${n.type==='News'?'badge-news':'badge-notice'}">${n.type==='News'?'সংবাদ':'নোটিশ'}</span></td>
+        <td><span class="badge badge-general">${n.badge}</span></td>
+        <td style="font-size:0.8rem;">${new Date(n.publishedDate).toLocaleDateString('bn-BD')}</td>
+        <td><span class="badge ${n.isPublished?'badge-active':'badge-inactive'}">${n.isPublished?'প্রকাশিত':'অপ্রকাশিত'}</span></td>
+        <td>
+          <button class="btn-sm btn-edit" onclick="editNews(${n.id})">✏️ সম্পাদন</button>
+          <button class="btn-sm btn-delete" onclick="deleteNews(${n.id})">🗑️ মুছুন</button>
+        </td>
+      </tr>`).join('');
+  } catch {
+    document.getElementById('newsTableBody').innerHTML =
+      '<tr class="loading-row"><td colspan="7">❌ লোড করা যায়নি।</td></tr>';
+  }
+}
+
+function openNewsModal(item = null) {
+  const isEdit = !!item;
+  document.getElementById('newsModalTitle').textContent = isEdit ? 'সংবাদ সম্পাদনা' : 'নতুন সংবাদ/নোটিশ লিখুন';
+  document.getElementById('newsId').value    = isEdit ? item.id : '';
+  document.getElementById('n_title').value   = isEdit ? item.title : '';
+  document.getElementById('n_content').value = isEdit ? (item.content||'') : '';
+  document.getElementById('n_type').value    = isEdit ? item.type : 'News';
+  document.getElementById('n_badge').value   = isEdit ? item.badge : 'New';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('n_date').value    = isEdit ? item.publishedDate.split('T')[0] : today;
+  document.getElementById('n_published').value = isEdit ? String(item.isPublished) : 'true';
+  document.getElementById('n_publishedGroup').style.display = isEdit ? 'block' : 'none';
+  document.getElementById('newsModal').classList.add('open');
+}
+
+function editNews(id) {
+  const n = allNews.find(x => x.id === id);
+  if (n) openNewsModal(n);
+}
+
+async function saveNews() {
+  const id    = document.getElementById('newsId').value;
+  const title = document.getElementById('n_title').value.trim();
+  if (!title) { showToast('শিরোনাম আবশ্যক।', 'error'); return; }
+
+  const btn = document.getElementById('newsSaveBtn');
+  btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে...';
+
+  try {
+    let res;
+    if (id) {
+      res = await fetch(`${API}/news/${id}`, {
+        method: 'PUT',
+        headers: authHeaders(),
+        body: JSON.stringify({
+          title,
+          content:      document.getElementById('n_content').value || null,
+          badge:        document.getElementById('n_badge').value,
+          publishedDate:document.getElementById('n_date').value,
+          isPublished:  document.getElementById('n_published').value === 'true'
+        })
+      });
+    } else {
+      res = await fetch(`${API}/news`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({
+          title,
+          content:      document.getElementById('n_content').value || null,
+          type:         document.getElementById('n_type').value,
+          badge:        document.getElementById('n_badge').value,
+          publishedDate:document.getElementById('n_date').value
+        })
+      });
+    }
+    if (!res.ok) throw new Error();
+    closeModal('newsModal');
+    showToast(id ? 'আপডেট হয়েছে।' : 'প্রকাশিত হয়েছে।');
+    loadNews();
+  } catch {
+    showToast('সংরক্ষণ ব্যর্থ হয়েছে।', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'সংরক্ষণ করুন';
+  }
+}
+
+async function deleteNews(id) {
+  if (!confirm("এই সংবাদটি মুছে দেবেন?")) return;
+  try {
+    await fetch(`${API}/news/${id}`, { method: 'DELETE', headers: authHeaders() });
+    showToast('মুছে দেওয়া হয়েছে।');
+    loadNews();
+  } catch {
+    showToast('মুছতে ব্যর্থ।', 'error');
+  }
+}
+
+// ════════════════════════════════
+// MESSAGES
+// ════════════════════════════════
+async function loadMessages() {
+  document.getElementById('msgTableBody').innerHTML =
+    '<tr class="loading-row"><td colspan="7">⏳ লোড হচ্ছে...</td></tr>';
+  const unread = document.getElementById('msgFilter').value === 'unread';
+  const url = `${API}/contact${unread ? '?unread=true' : ''}`;
+  try {
+    const res = await fetch(url, { headers: authHeaders() });
+    const msgs = await res.json();
+    const tbody = document.getElementById('msgTableBody');
+    if (!msgs.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-state">কোনো বার্তা নেই।</td></tr>';
+      return;
+    }
+    tbody.innerHTML = msgs.map((m, i) => `
+      <tr style="${!m.isRead?'background:#fffbf0;':''}">
+        <td style="color:var(--text-light);font-size:0.75rem;">${i+1}</td>
+        <td style="font-weight:600;">${m.name}</td>
+        <td style="max-width:200px;font-size:0.82rem;">${m.subject}</td>
+        <td style="font-size:0.78rem;color:var(--text-light);">
+          ${m.phone||''} ${m.email ? `<br>${m.email}` : ''}
+        </td>
+        <td style="font-size:0.78rem;">${new Date(m.sentAt).toLocaleDateString('bn-BD')}</td>
+        <td><span class="badge ${m.isRead?'badge-read':'badge-unread'}">${m.isRead?'পঠিত':'অপঠিত'}</span></td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn-sm btn-edit" onclick="viewMsg(${m.id})">👁️ দেখুন</button>
+          ${!m.isRead ? `<button class="btn-sm btn-read" onclick="markRead(${m.id})">✓ পঠিত</button>` : ''}
+          <button class="btn-sm btn-delete" onclick="deleteMsg(${m.id})">🗑️</button>
+        </td>
+      </tr>`).join('');
+  } catch {
+    document.getElementById('msgTableBody').innerHTML =
+      '<tr class="loading-row"><td colspan="7">❌ লোড করা যায়নি।</td></tr>';
+  }
+}
+
+function viewMsg(id) {
+  // Re-fetch or find from DOM
+  fetch(`${API}/contact`, { headers: authHeaders() })
+    .then(r => r.json())
+    .then(msgs => {
+      const m = msgs.find(x => x.id === id);
+      if (!m) return;
+      document.getElementById('msgDetailContent').innerHTML = `
+        <table style="width:100%;margin-bottom:16px;font-size:0.84rem;">
+          <tr><td style="color:var(--text-light);width:90px;padding:4px 0;">নাম:</td><td><strong>${m.name}</strong></td></tr>
+          <tr><td style="color:var(--text-light);padding:4px 0;">ফোন:</td><td>${m.phone||'—'}</td></tr>
+          <tr><td style="color:var(--text-light);padding:4px 0;">ইমেইল:</td><td>${m.email||'—'}</td></tr>
+          <tr><td style="color:var(--text-light);padding:4px 0;">বিষয়:</td><td><strong>${m.subject}</strong></td></tr>
+          <tr><td style="color:var(--text-light);padding:4px 0;">তারিখ:</td><td>${new Date(m.sentAt).toLocaleString('bn-BD')}</td></tr>
+        </table>
+        <div class="msg-detail">${m.message}</div>`;
+      document.getElementById('msgModal').classList.add('open');
+      if (!m.isRead) markRead(id);
+    });
+}
+
+async function markRead(id) {
+  try {
+    await fetch(`${API}/contact/${id}/read`, { method: 'PATCH', headers: authHeaders() });
+    loadMessages(); loadDashboard();
+  } catch { showToast('আপডেট ব্যর্থ।', 'error'); }
+}
+
+async function deleteMsg(id) {
+  if (!confirm("বার্তাটি মুছবেন?")) return;
+  try {
+    await fetch(`${API}/contact/${id}`, { method: 'DELETE', headers: authHeaders() });
+    showToast('বার্তা মুছে দেওয়া হয়েছে।');
+    loadMessages();
+  } catch { showToast('মুছতে ব্যর্থ।', 'error'); }
+}
+
+// ════════════════════════════════
+// MODAL HELPERS
+// ════════════════════════════════
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+// Close on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => {
+    if (e.target === o) o.classList.remove('open');
+  });
+});
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+if (getToken()) {
+  document.getElementById('loginScreen').style.display = 'none';
+  initAdmin();
+}
+</script>
+</body>
+</html>
